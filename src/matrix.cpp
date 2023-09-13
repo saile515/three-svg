@@ -1,7 +1,7 @@
 #include "matrix.hpp"
 #include <utility>
 
-Matrix4x4::Matrix4x4(float data[16]) : data(*data) {}
+Matrix4x4::Matrix4x4(float data[16]) : data{*data} {}
 
 const float &Matrix4x4::operator[](int index) const { return data[index]; };
 

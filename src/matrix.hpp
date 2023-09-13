@@ -7,7 +7,7 @@ Vector3 operator*(const Matrix4x4 &a, const Vector3 &b);
 
 class Matrix4x4 {
 public:
-    Matrix4x4(float data[16]);
+    Matrix4x4(float data[16] = new float[16]{0});
     const float &operator[](int index) const;
 
 private:
