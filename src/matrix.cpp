@@ -1,12 +1,14 @@
 #include "matrix.hpp"
+#include <cmath>
+#include <numbers>
 #include <utility>
 
-Matrix4x4::Matrix4x4(float data[16]) : data{*data} {}
+Matrix4x4::Matrix4x4(double data[16]) : data{*data} {}
 
-const float &Matrix4x4::operator[](int index) const { return data[index]; };
+const double &Matrix4x4::operator[](int index) const { return data[index]; };
 
 Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
-    float data[16] = {
+    double data[16] = {
         a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
         a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13],
         a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + a[3] * b[14],
@@ -25,4 +27,19 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
         a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15]};
 
     return Matrix4x4(data);
+}
+
+Matrix4x4 Matrix4x4::perspective(double fov, double near, double far) {
+    return Matrix4x4((double[]){
+        1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0, 0, 0,
+        1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0, 0, 0,
+        -(far / (far - near)), -1, 0, 0, -((far * near) / (far - near)), 0});
+}
+
+Matrix4x4 Matrix4x4::orthographic(double left, double right, double bottom,
+                                  double top, double near, double far) {
+    return Matrix4x4((double[]){
+        2 / (right - left), 0, 0, -((right + left) / (right - left)), 0,
+        2 / (top - bottom), 0, -((top + bottom) / (top - bottom)), 0, 0,
+        (-2) / (far / near), -((far + near) / (far - near)), 0, 0, 0, 1});
 }

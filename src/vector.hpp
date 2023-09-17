@@ -2,5 +2,5 @@
 
 class Vector3 {
 private:
-    float data[3];
+    double data[3];
 };
