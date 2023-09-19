@@ -30,16 +30,42 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
 }
 
 Matrix4x4 Matrix4x4::perspective(double fov, double near, double far) {
-    return Matrix4x4((double[]){
-        1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0, 0, 0,
-        1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0, 0, 0,
-        -(far / (far - near)), -1, 0, 0, -((far * near) / (far - near)), 0});
+    double values[16] = {1 / std::tan((fov / 2) * (std::numbers::pi / 180)),
+                         0,
+                         0,
+                         0,
+                         0,
+                         1 / std::tan((fov / 2) * (std::numbers::pi / 180)),
+                         0,
+                         0,
+                         0,
+                         0,
+                         -(far / (far - near)),
+                         -1,
+                         0,
+                         0,
+                         -((far * near) / (far - near)),
+                         0};
+    return Matrix4x4(values);
 }
 
 Matrix4x4 Matrix4x4::orthographic(double left, double right, double bottom,
                                   double top, double near, double far) {
-    return Matrix4x4((double[]){
-        2 / (right - left), 0, 0, -((right + left) / (right - left)), 0,
-        2 / (top - bottom), 0, -((top + bottom) / (top - bottom)), 0, 0,
-        (-2) / (far / near), -((far + near) / (far - near)), 0, 0, 0, 1});
+    double values[] = {2 / (right - left),
+                       0,
+                       0,
+                       -((right + left) / (right - left)),
+                       0,
+                       2 / (top - bottom),
+                       0,
+                       -((top + bottom) / (top - bottom)),
+                       0,
+                       0,
+                       (-2) / (far / near),
+                       -((far + near) / (far - near)),
+                       0,
+                       0,
+                       0,
+                       1};
+    return Matrix4x4(values);
 }
