@@ -16,9 +16,9 @@ include(cmake/Git.cmake)
 # SETTINGS ###
 
 # add all headers (.h, .hpp) to this
-set(PRJ_HEADERS src/matrix.cpp src/vector.hpp)
+set(PRJ_HEADERS src/matrix.cpp src/vector.hpp src/model.hpp)
 # add all source files (.cpp) to this, except the one with main()
-set(PRJ_SOURCES src/matrix.cpp src/vector.cpp)
+set(PRJ_SOURCES src/matrix.cpp src/vector.cpp src/model.cpp)
 # set the source file containing main()
 set(PRJ_MAIN src/main.cpp)
 # set include paths not part of libraries
@@ -28,10 +28,11 @@ set(PRJ_COMPILE_FEATURES cxx_std_20)
 # set #defines (test enable/disable not included here)
 set(PRJ_DEFINITIONS)
 # add all libraries used by the project (WARNING: also set them in vcpkg.json!)
-set(PRJ_LIBRARIES fmt::fmt)
+set(PRJ_LIBRARIES fmt::fmt tinyobjloader::tinyobjloader)
 
 # add dependency find_package calls and similar here
 find_package(fmt CONFIG REQUIRED)
+find_package(tinyobjloader CONFIG REQUIRED)
 
 # END SETTINGS ###
 
