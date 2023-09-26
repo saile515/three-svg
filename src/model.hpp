@@ -1,10 +1,13 @@
 #pragma once
 #include <string>
+#include <vector>
 
 class Model {
 public:
-    Model(std::string path);
+    Model(std::vector<double> vertices, std::vector<double> colors);
+    [[nodiscard]] static std::vector<Model> load_from_obj(std::string path, std::string mtl_path);
 
 private:
-    int load_model(std::string path, std::string mtl_path);
+    std::vector<double> vertices;
+    std::vector<double> colors;
 };
