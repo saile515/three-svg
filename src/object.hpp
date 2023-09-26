@@ -2,8 +2,12 @@
 
 #include "matrix.hpp"
 #include "vector.hpp"
+#include <string>
+
 class Object {
 public:
+    std::string get_render_string();
+
 private:
     Vector3 position;
     Vector3 rotation;
