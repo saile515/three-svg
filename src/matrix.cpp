@@ -1,4 +1,5 @@
 #include "matrix.hpp"
+#include "vector.hpp"
 #include <cmath>
 #include <numbers>
 #include <utility>
@@ -30,42 +31,66 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
 }
 
 Matrix4x4 Matrix4x4::perspective(double fov, double near, double far) {
-    double values[16] = {1 / std::tan((fov / 2) * (std::numbers::pi / 180)),
-                         0,
-                         0,
-                         0,
-                         0,
-                         1 / std::tan((fov / 2) * (std::numbers::pi / 180)),
-                         0,
-                         0,
-                         0,
-                         0,
-                         -(far / (far - near)),
-                         -1,
-                         0,
-                         0,
-                         -((far * near) / (far - near)),
-                         0};
+    double values[16] = {1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0, 0,
+                         0, 1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0,
+                         0, 0, -(far / (far - near)), -1,
+                         0, 0, -((far * near) / (far - near)), 0};
     return Matrix4x4(values);
 }
 
-Matrix4x4 Matrix4x4::orthographic(double left, double right, double bottom,
-                                  double top, double near, double far) {
-    double values[] = {2 / (right - left),
-                       0,
-                       0,
-                       -((right + left) / (right - left)),
-                       0,
-                       2 / (top - bottom),
-                       0,
-                       -((top + bottom) / (top - bottom)),
-                       0,
-                       0,
-                       (-2) / (far / near),
-                       -((far + near) / (far - near)),
-                       0,
-                       0,
-                       0,
-                       1};
+Matrix4x4 Matrix4x4::orthographic(double left, double right, double bottom, double top, double near, double far) {
+    double values[] = {2 / (right - left), 0, 0, -((right + left) / (right - left)),
+                       0, 2 / (top - bottom), 0, -((top + bottom) / (top - bottom)),
+                       0, 0, (-2) / (far / near), -((far + near) / (far - near)),
+                       0, 0, 0, 1};
     return Matrix4x4(values);
+}
+
+Matrix4x4 Matrix4x4::position(Vector3 vector) {
+    double data[16] = {
+        1, 0, 0, vector[0],
+        0, 1, 0, vector[1],
+        0, 0, 1, vector[2],
+        0, 0, 0, 1};
+
+    return Matrix4x4(data);
+}
+
+Matrix4x4 Matrix4x4::rotation(Vector3 vector) {
+    double x = vector[0];
+    double y = vector[1];
+    double z = vector[2];
+
+    double x_data[16] = {1, 0, 0, 0,
+                         0, std::cos(x), -std::sin(x), 0,
+                         0, std::sin(x), std::cos(x), 0,
+                         0, 0, 0, 1};
+
+    Matrix4x4 x_matrix(x_data);
+
+    double y_data[16] = {std::cos(y), 0, std::sin(y), 0,
+                         0, 1, 0, 0,
+                         -std::sin(y), 0, std::cos(y), 0,
+                         0, 0, 0, 1};
+
+    Matrix4x4 y_matrix(y_data);
+
+    double z_data[16] = {std::cos(z), -std::sin(z), 0, 0,
+                         std::sin(z), std::cos(z), 0, 0,
+                         0, 0, 1, 0,
+                         0, 0, 0, 1};
+
+    Matrix4x4 z_matrix(z_data);
+
+    return x_matrix * y_matrix * z_matrix;
+}
+
+Matrix4x4 Matrix4x4::scale(Vector3 vector) {
+    double data[16] = {
+        vector[0], 0, 0, 0,
+        0, vector[1], 0, 0,
+        0, 0, vector[2], 0,
+        0, 0, 0, 1};
+
+    return Matrix4x4(data);
 }
