@@ -30,11 +30,11 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
     return Matrix4x4(data);
 }
 
-Matrix4x4 Matrix4x4::perspective(double fov, double near, double far) {
-    double values[16] = {1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0, 0,
-                         0, 1 / std::tan((fov / 2) * (std::numbers::pi / 180)), 0, 0,
-                         0, 0, -(far / (far - near)), -1,
-                         0, 0, -((far * near) / (far - near)), 0};
+Matrix4x4 Matrix4x4::perspective(double fov, double width, double height, double near, double far) {
+    double values[16] = {(1 / std::tan(fov / 2)) / (width / height), 0, 0, 0,
+                         0, 1 / std::tan(fov / 2), 0, 0,
+                         0, 0, (far + near) / (near - far), -1,
+                         0, 0, (far * near * 2) / (near - far), 0};
     return Matrix4x4(values);
 }
 

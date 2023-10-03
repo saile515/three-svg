@@ -10,7 +10,7 @@ public:
 
     [[nodiscard]] const double &operator[](int index) const;
 
-    [[nodiscard]] static Matrix4x4 perspective(double fov, double near, double far);
+    [[nodiscard]] static Matrix4x4 perspective(double fov, double width, double height, double near, double far);
     [[nodiscard]] static Matrix4x4 orthographic(double left, double right, double bottom, double top, double near, double far);
     [[nodiscard]] static Matrix4x4 position(Vector3 vector);
     [[nodiscard]] static Matrix4x4 rotation(Vector3 vector);
