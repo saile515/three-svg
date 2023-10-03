@@ -8,6 +8,8 @@ class Matrix4x4 {
 public:
     Matrix4x4(double data[16] = new double[16]{0});
 
+    [[nodiscard]] Matrix4x4 inverse();
+
     [[nodiscard]] const double &operator[](int index) const;
 
     [[nodiscard]] static Matrix4x4 perspective(double fov, double width, double height, double near, double far);

@@ -8,6 +8,17 @@ Matrix4x4::Matrix4x4(double data[16]) : data{*data} {}
 
 const double &Matrix4x4::operator[](int index) const { return data[index]; };
 
+Matrix4x4 Matrix4x4::inverse() {
+    double determinant = data[0] * data[5] * data[10] * data[15] + data[0] * data[6] * data[11] * data[13] + data[0] * data[7] * data[9] * data[14]   //
+                         - data[0] * data[7] * data[10] * data[13] - data[0] * data[6] * data[9] * data[15] - data[0] * data[5] * data[11] * data[14] //
+                         - data[1] * data[4] * data[10] * data[15] - data[2] * data[4] * data[11] * data[13] - data[3] * data[4] * data[9] * data[14] //
+                         + data[3] * data[4] * data[10] * data[13] + data[2] * data[4] * data[9] * data[15] + data[1] * data[4] * data[11] * data[14] //
+                         + data[1] * data[6] * data[8] * data[15] + data[2] * data[7] * data[8] * data[13] + data[3] * data[5] * data[8] * data[14]   //
+                         - data[3] * data[6] * data[8] * data[13] - data[2] * data[5] * data[8] * data[15] - data[1] * data[7] * data[8] * data[14]   //
+                         - data[1] * data[6] * data[11] * data[12] - data[2] * data[7] * data[9] * data[12] - data[3] * data[5] * data[10] * data[12] //
+                         + data[3] * data[6] * data[9] * data[12] + data[2] * data[5] * data[11] * data[12] + data[1] * data[7] * data[10] * data[12];
+};
+
 Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
     double data[16] = {
         a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
