@@ -8,6 +8,12 @@
 Object::Object(Vector3 position, Vector3 rotation, Vector3 scale, Model model)
     : position(position), rotation(rotation), scale(scale), model(model) {}
 
+void Object::calculate_mvp_matrix(Matrix4x4 view_matrix, Matrix4x4 projection_matrix) {
+    calculate_model_matrix();
+
+    mvp_matrix = projection_matrix * view_matrix * model_matrix;
+}
+
 void Object::calculate_model_matrix() {
     Matrix4x4 position_matrix = Matrix4x4::position(position);
     Matrix4x4 rotation_matrix = Matrix4x4::rotation(rotation);
