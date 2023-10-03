@@ -5,13 +5,12 @@
 #include <vector>
 
 struct SceneProperties {
-    SceneProperties();
     std::string version;
 
     struct CameraProperties {
         std::string type;
-        std::array<double, 3> &position;
-        std::array<double, 3> &rotation;
+        std::array<double, 3> position;
+        std::array<double, 3> rotation;
         double fov;
         double near;
         double far;
@@ -21,16 +20,16 @@ struct SceneProperties {
 
     struct LightingProperties {
         struct AmbientLightProperties {
-            std::array<double, 3> &color;
+            std::array<double, 3> color;
             double intensity;
         };
 
         AmbientLightProperties ambient;
 
         struct DirectionalLightProperties {
-            std::array<double, 3> &color;
+            std::array<double, 3> color;
             double intensity;
-            std::array<double, 3> &rotation;
+            std::array<double, 3> rotation;
         };
 
         DirectionalLightProperties directional;
@@ -39,12 +38,11 @@ struct SceneProperties {
     LightingProperties lighting;
 
     struct ObjectProperties {
-        ObjectProperties();
         std::string model;
         std::string material;
-        std::array<double, 3> &position;
-        std::array<double, 3> &rotation;
-        std::array<double, 3> &scale;
+        std::array<double, 3> position;
+        std::array<double, 3> rotation;
+        std::array<double, 3> scale;
     };
 
     std::vector<ObjectProperties> objects;
