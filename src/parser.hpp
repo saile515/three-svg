@@ -44,3 +44,13 @@ struct SceneProperties {
 
     std::vector<ObjectProperties> objects;
 };
+
+class Parser {
+public:
+    Parser(std::string path);
+    SceneProperties result;
+
+private:
+    std::string path;
+    void parse();
+};

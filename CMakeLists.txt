@@ -30,11 +30,12 @@ set(PRJ_COMPILE_FEATURES cxx_std_20)
 # set #defines (test enable/disable not included here)
 set(PRJ_DEFINITIONS)
 # add all libraries used by the project (WARNING: also set them in vcpkg.json!)
-set(PRJ_LIBRARIES fmt::fmt tinyobjloader::tinyobjloader)
+set(PRJ_LIBRARIES fmt::fmt tinyobjloader::tinyobjloader JsonCpp::JsonCpp)
 
 # add dependency find_package calls and similar here
 find_package(fmt CONFIG REQUIRED)
 find_package(tinyobjloader CONFIG REQUIRED)
+find_package(jsoncpp CONFIG REQUIRED)
 
 # END SETTINGS ###
 
