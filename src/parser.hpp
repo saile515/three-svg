@@ -12,6 +12,8 @@ struct SceneProperties {
         std::array<double, 3> position;
         std::array<double, 3> rotation;
         double fov;
+        double width;
+        double height;
         double near;
         double far;
     };
@@ -52,8 +54,8 @@ class Parser {
 public:
     Parser(std::string path);
     SceneProperties result;
+    void parse();
 
 private:
     std::string path;
-    void parse();
 };
