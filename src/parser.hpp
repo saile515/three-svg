@@ -1,15 +1,17 @@
 #pragma once
 
+#include <array>
 #include <string>
 #include <vector>
 
 struct SceneProperties {
+    SceneProperties();
     std::string version;
 
     struct CameraProperties {
         std::string type;
-        double position[3];
-        double rotation[3];
+        std::array<double, 3> &position;
+        std::array<double, 3> &rotation;
         double fov;
         double near;
         double far;
@@ -19,27 +21,30 @@ struct SceneProperties {
 
     struct LightingProperties {
         struct AmbientLightProperties {
-            double color[3];
+            std::array<double, 3> &color;
             double intensity;
         };
 
         AmbientLightProperties ambient;
 
         struct DirectionalLightProperties {
-            double color[3];
+            std::array<double, 3> &color;
             double intensity;
-            double rotation[3];
+            std::array<double, 3> &rotation;
         };
 
         DirectionalLightProperties directional;
     };
 
+    LightingProperties lighting;
+
     struct ObjectProperties {
+        ObjectProperties();
         std::string model;
         std::string material;
-        double position[3];
-        double rotation[3];
-        double scale[3];
+        std::array<double, 3> &position;
+        std::array<double, 3> &rotation;
+        std::array<double, 3> &scale;
     };
 
     std::vector<ObjectProperties> objects;
