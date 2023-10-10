@@ -17,6 +17,29 @@ Matrix4x4 Matrix4x4::inverse() {
                          - data[3] * data[6] * data[8] * data[13] - data[2] * data[5] * data[8] * data[15] - data[1] * data[7] * data[8] * data[14]   //
                          - data[1] * data[6] * data[11] * data[12] - data[2] * data[7] * data[9] * data[12] - data[3] * data[5] * data[10] * data[12] //
                          + data[3] * data[6] * data[9] * data[12] + data[2] * data[5] * data[11] * data[12] + data[1] * data[7] * data[10] * data[12];
+
+    double adjugate_data[16] = {
+        data[5] * data[10] * data[15] + data[6] * data[11] * data[13] + data[7] * data[9] * data[14] - data[7] * data[10] * data[13] - data[6] * data[9] * data[15] - data[5] * data[11] * data[14],
+        -data[1] * data[10] * data[15] - data[2] * data[11] * data[13] - data[3] * data[9] * data[14] + data[3] * data[10] * data[13] + data[2] * data[9] * data[15] + data[1] * data[11] * data[14],
+        data[1] * data[6] * data[15] + data[2] * data[7] * data[13] + data[3] * data[5] * data[14] - data[3] * data[6] * data[13] - data[2] * data[5] * data[15] - data[1] * data[7] * data[14],
+        -data[1] * data[6] * data[11] - data[2] * data[7] * data[9] - data[3] * data[5] * data[10] + data[3] * data[6] * data[9] + data[2] * data[5] * data[11] + data[1] * data[7] * data[10],
+        -data[4] * data[10] * data[15] - data[6] * data[11] * data[12] - data[7] * data[8] * data[14] + data[7] * data[10] * data[12] + data[6] * data[8] * data[15] + data[4] * data[11] * data[14],
+        data[0] * data[10] * data[15] + data[2] * data[11] * data[12] + data[3] * data[8] * data[14] - data[3] * data[10] * data[12] - data[2] * data[8] * data[15] - data[0] * data[11] * data[14],
+        -data[0] * data[6] * data[15] - data[2] * data[7] * data[12] - data[3] * data[4] * data[14] + data[3] * data[6] * data[12] + data[2] * data[4] * data[15] + data[0] * data[7] * data[14],
+        data[0] * data[6] * data[11] + data[2] * data[7] * data[8] + data[3] * data[4] * data[10] - data[3] * data[6] * data[8] - data[2] * data[4] * data[11] - data[0] * data[7] * data[10],
+        data[4] * data[9] * data[15] + data[5] * data[11] * data[12] + data[7] * data[8] * data[13] - data[7] * data[9] * data[12] - data[5] * data[8] * data[15] - data[4] * data[11] * data[13],
+        -data[0] * data[9] * data[15] - data[1] * data[11] * data[12] - data[3] * data[8] * data[13] + data[3] * data[9] * data[12] + data[1] * data[8] * data[15] + data[0] * data[11] * data[13],
+        data[0] * data[5] * data[15] + data[1] * data[7] * data[12] + data[3] * data[4] * data[13] - data[3] * data[5] * data[12] - data[1] * data[4] * data[15] - data[0] * data[7] * data[13],
+        -data[0] * data[5] * data[11] - data[1] * data[7] * data[8] - data[3] * data[4] * data[9] + data[3] * data[5] * data[8] + data[1] * data[4] * data[11] + data[0] * data[7] * data[9],
+        -data[4] * data[9] * data[14] - data[5] * data[10] * data[12] - data[6] * data[8] * data[13] + data[6] * data[9] * data[12] + data[5] * data[8] * data[14] + data[4] * data[10] * data[13],
+        data[0] * data[9] * data[14] + data[1] * data[10] * data[12] + data[2] * data[8] * data[13] - data[2] * data[9] * data[12] - data[1] * data[8] * data[14] - data[0] * data[10] * data[13],
+        -data[0] * data[5] * data[14] - data[1] * data[6] * data[12] - data[2] * data[4] * data[13] + data[2] * data[5] * data[12] + data[1] * data[4] * data[14] + data[0] * data[6] * data[13],
+        data[0] * data[5] * data[10] + data[1] * data[6] * data[8] + data[2] * data[4] * data[9] - data[2] * data[5] * data[8] - data[1] * data[4] * data[10] - data[0] * data[6] * data[9],
+    };
+
+    Matrix4x4 adjugate(adjugate_data);
+
+    return (1 / determinant) * adjugate;
 };
 
 Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
@@ -37,6 +60,16 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
         a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13],
         a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14],
         a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15]};
+
+    return Matrix4x4(data);
+}
+
+Matrix4x4 operator*(double a, const Matrix4x4 &b) {
+    double data[16];
+
+    for (int i = 0; i < 16; i++) {
+        data[i] = b.get_data()[i] * a;
+    }
 
     return Matrix4x4(data);
 }

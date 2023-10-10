@@ -3,6 +3,7 @@ class Vector3;
 class Matrix4x4;
 
 Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b);
+Matrix4x4 operator*(double a, const Matrix4x4 &b);
 
 class Matrix4x4 {
 public:
@@ -17,6 +18,8 @@ public:
     [[nodiscard]] static Matrix4x4 position(Vector3 vector);
     [[nodiscard]] static Matrix4x4 rotation(Vector3 vector);
     [[nodiscard]] static Matrix4x4 scale(Vector3 vector);
+
+    const double *get_data() const { return data; };
 
 private:
     double data[16];
