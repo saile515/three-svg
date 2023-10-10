@@ -23,7 +23,7 @@ void Object::calculate_model_matrix() {
 }
 
 static Vector4 world_space_to_screen_space(double x, double y, double z, Matrix4x4 matrix) {
-    double world_space_data[3] = {x, y, z};
+    std::array<double, 3> world_space_data({x, y, z});
     Vector3 world_space(world_space_data);
     Vector4 screen_space = matrix * Vector4(world_space, 1);
     return screen_space;
