@@ -14,5 +14,8 @@ int main(int argc, char **argv) {
     } else if (scene.camera.type == "orthographic") {
         projection_matrix = Matrix4x4::orthographic(0, scene.camera.width, scene.camera.height, 0, scene.camera.near, scene.camera.far);
     }
+
+    Matrix4x4 view_matrix = (Matrix4x4::position(Vector3(scene.camera.position)) * Matrix4x4::rotation(Vector3(scene.camera.rotation))).inverse();
+
     return 0;
 }
