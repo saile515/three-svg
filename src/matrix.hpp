@@ -9,6 +9,8 @@ class Matrix4x4 {
 public:
     Matrix4x4(double data[16] = new double[16]{0});
 
+    void print() const;
+
     [[nodiscard]] Matrix4x4 inverse();
 
     [[nodiscard]] const double &operator[](int index) const;

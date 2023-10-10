@@ -1,12 +1,21 @@
 #include "matrix.hpp"
 #include "vector.hpp"
 #include <cmath>
+#include <iostream>
 #include <numbers>
 #include <utility>
 
 Matrix4x4::Matrix4x4(double data[16]) : data{*data} {}
 
 const double &Matrix4x4::operator[](int index) const { return data[index]; };
+
+void Matrix4x4::print() const {
+    std::cout
+        << "| " << data[0] << "\t | " << data[1] << "\t | " << data[2] << "\t | " << data[3] << "\t |\n"
+        << "| " << data[4] << "\t | " << data[5] << "\t | " << data[6] << "\t | " << data[7] << "\t |\n"
+        << "| " << data[8] << "\t | " << data[9] << "\t | " << data[10] << "\t | " << data[11] << "\t |\n"
+        << "| " << data[12] << "\t | " << data[13] << "\t | " << data[14] << "\t | " << data[15] << "\t |\n\n";
+}
 
 Matrix4x4 Matrix4x4::inverse() {
     double determinant = data[0] * data[5] * data[10] * data[15] + data[0] * data[6] * data[11] * data[13] + data[0] * data[7] * data[9] * data[14]   //
@@ -39,10 +48,21 @@ Matrix4x4 Matrix4x4::inverse() {
 
     Matrix4x4 adjugate(adjugate_data);
 
+    if (determinant < 1 && determinant > -1) {
+        std::cout << "Error: determinant is 0.\n";
+        for (double value : data) {
+            std::cout << value << " ";
+        }
+        exit(1);
+    }
+
     return (1 / determinant) * adjugate;
 };
 
 Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
+    a.print();
+    b.print();
+
     double data[16] = {
         a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
         a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13],
@@ -53,7 +73,6 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
         a[4] * b[2] + a[5] * b[6] + a[6] * b[10] + a[7] * b[14],
         a[4] * b[3] + a[5] * b[7] + a[6] * b[11] + a[7] * b[15],
         a[8] * b[0] + a[9] * b[4] + a[10] * b[8] + a[11] * b[12],
-        a[8] * b[1] + a[9] * b[5] + a[10] * b[9] + a[11] * b[13],
         a[8] * b[2] + a[9] * b[6] + a[10] * b[10] + a[11] * b[14],
         a[8] * b[3] + a[9] * b[7] + a[10] * b[11] + a[11] * b[15],
         a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12],
@@ -125,6 +144,12 @@ Matrix4x4 Matrix4x4::rotation(Vector3 vector) {
                          0, 0, 0, 1};
 
     Matrix4x4 z_matrix(z_data);
+
+    std::cout << "Rotation matrices\n";
+    x_matrix.print();
+    y_matrix.print();
+    z_matrix.print();
+    std::cout << "_________________________________\n";
 
     return x_matrix * y_matrix * z_matrix;
 }
