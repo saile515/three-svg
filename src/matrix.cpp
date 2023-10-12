@@ -48,8 +48,6 @@ Matrix4x4 Matrix4x4::inverse() {
 
     Matrix4x4 adjugate(adjugate_data);
 
-    print();
-
     if (determinant < 1 && determinant > -1) {
         std::cout << "Error: determinant is 0.\n";
         exit(1);
@@ -142,13 +140,6 @@ Matrix4x4 Matrix4x4::rotation(Vector3 vector) {
 
     Matrix4x4 z_matrix(z_data);
 
-    std::cout << "Rotation matrices\n";
-    x_matrix.print();
-    y_matrix.print();
-    z_matrix.print();
-    std::cout << "_________________________________\n";
-
-    (x_matrix * y_matrix * z_matrix).print();
     return x_matrix * y_matrix * z_matrix;
 }
 
