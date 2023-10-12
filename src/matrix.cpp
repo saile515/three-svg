@@ -69,6 +69,7 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
         a[4] * b[2] + a[5] * b[6] + a[6] * b[10] + a[7] * b[14],
         a[4] * b[3] + a[5] * b[7] + a[6] * b[11] + a[7] * b[15],
         a[8] * b[0] + a[9] * b[4] + a[10] * b[8] + a[11] * b[12],
+        a[8] * b[1] + a[9] * b[5] + a[10] * b[9] + a[11] * b[13],
         a[8] * b[2] + a[9] * b[6] + a[10] * b[10] + a[11] * b[14],
         a[8] * b[3] + a[9] * b[7] + a[10] * b[11] + a[11] * b[15],
         a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12],
@@ -147,6 +148,7 @@ Matrix4x4 Matrix4x4::rotation(Vector3 vector) {
     z_matrix.print();
     std::cout << "_________________________________\n";
 
+    (x_matrix * y_matrix * z_matrix).print();
     return x_matrix * y_matrix * z_matrix;
 }
 
