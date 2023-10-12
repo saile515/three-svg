@@ -5,7 +5,7 @@
 #include <numbers>
 #include <utility>
 
-Matrix4x4::Matrix4x4(double data[16]) : data{*data} {}
+Matrix4x4::Matrix4x4(std::array<double, 16> data) : data{data} {}
 
 const double &Matrix4x4::operator[](int index) const { return data[index]; };
 
@@ -27,7 +27,7 @@ Matrix4x4 Matrix4x4::inverse() {
                          - data[1] * data[6] * data[11] * data[12] - data[2] * data[7] * data[9] * data[12] - data[3] * data[5] * data[10] * data[12] //
                          + data[3] * data[6] * data[9] * data[12] + data[2] * data[5] * data[11] * data[12] + data[1] * data[7] * data[10] * data[12];
 
-    double adjugate_data[16] = {
+    std::array<double, 16> adjugate_data = {
         data[5] * data[10] * data[15] + data[6] * data[11] * data[13] + data[7] * data[9] * data[14] - data[7] * data[10] * data[13] - data[6] * data[9] * data[15] - data[5] * data[11] * data[14],
         -data[1] * data[10] * data[15] - data[2] * data[11] * data[13] - data[3] * data[9] * data[14] + data[3] * data[10] * data[13] + data[2] * data[9] * data[15] + data[1] * data[11] * data[14],
         data[1] * data[6] * data[15] + data[2] * data[7] * data[13] + data[3] * data[5] * data[14] - data[3] * data[6] * data[13] - data[2] * data[5] * data[15] - data[1] * data[7] * data[14],
@@ -48,11 +48,10 @@ Matrix4x4 Matrix4x4::inverse() {
 
     Matrix4x4 adjugate(adjugate_data);
 
+    print();
+
     if (determinant < 1 && determinant > -1) {
         std::cout << "Error: determinant is 0.\n";
-        for (double value : data) {
-            std::cout << value << " ";
-        }
         exit(1);
     }
 
@@ -60,10 +59,7 @@ Matrix4x4 Matrix4x4::inverse() {
 };
 
 Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
-    a.print();
-    b.print();
-
-    double data[16] = {
+    std::array<double, 16> data = {
         a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
         a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13],
         a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + a[3] * b[14],
@@ -84,9 +80,9 @@ Matrix4x4 operator*(const Matrix4x4 &a, const Matrix4x4 &b) {
 }
 
 Matrix4x4 operator*(double a, const Matrix4x4 &b) {
-    double data[16];
+    std::array<double, 16> data;
 
-    for (int i = 0; i < 16; i++) {
+    for (size_t i = 0; i < 16; i++) {
         data[i] = b.get_data()[i] * a;
     }
 
@@ -94,23 +90,23 @@ Matrix4x4 operator*(double a, const Matrix4x4 &b) {
 }
 
 Matrix4x4 Matrix4x4::perspective(double fov, double width, double height, double near, double far) {
-    double values[16] = {(1 / std::tan(fov / 2)) / (width / height), 0, 0, 0,
-                         0, 1 / std::tan(fov / 2), 0, 0,
-                         0, 0, (far + near) / (near - far), -1,
-                         0, 0, (far * near * 2) / (near - far), 0};
+    std::array<double, 16> values = {(1 / std::tan(fov / 2)) / (width / height), 0, 0, 0,
+                                     0, 1 / std::tan(fov / 2), 0, 0,
+                                     0, 0, (far + near) / (near - far), -1,
+                                     0, 0, (far * near * 2) / (near - far), 0};
     return Matrix4x4(values);
 }
 
 Matrix4x4 Matrix4x4::orthographic(double left, double right, double bottom, double top, double near, double far) {
-    double values[] = {2 / (right - left), 0, 0, -((right + left) / (right - left)),
-                       0, 2 / (top - bottom), 0, -((top + bottom) / (top - bottom)),
-                       0, 0, (-2) / (far / near), -((far + near) / (far - near)),
-                       0, 0, 0, 1};
+    std::array<double, 16> values = {2 / (right - left), 0, 0, -((right + left) / (right - left)),
+                                     0, 2 / (top - bottom), 0, -((top + bottom) / (top - bottom)),
+                                     0, 0, (-2) / (far / near), -((far + near) / (far - near)),
+                                     0, 0, 0, 1};
     return Matrix4x4(values);
 }
 
 Matrix4x4 Matrix4x4::position(Vector3 vector) {
-    double data[16] = {
+    std::array<double, 16> data = {
         1, 0, 0, vector[0],
         0, 1, 0, vector[1],
         0, 0, 1, vector[2],
@@ -124,24 +120,24 @@ Matrix4x4 Matrix4x4::rotation(Vector3 vector) {
     double y = vector[1];
     double z = vector[2];
 
-    double x_data[16] = {1, 0, 0, 0,
-                         0, std::cos(x), -std::sin(x), 0,
-                         0, std::sin(x), std::cos(x), 0,
-                         0, 0, 0, 1};
+    std::array<double, 16> x_data = {1, 0, 0, 0,
+                                     0, std::cos(x), -std::sin(x), 0,
+                                     0, std::sin(x), std::cos(x), 0,
+                                     0, 0, 0, 1};
 
     Matrix4x4 x_matrix(x_data);
 
-    double y_data[16] = {std::cos(y), 0, std::sin(y), 0,
-                         0, 1, 0, 0,
-                         -std::sin(y), 0, std::cos(y), 0,
-                         0, 0, 0, 1};
+    std::array<double, 16> y_data = {std::cos(y), 0, std::sin(y), 0,
+                                     0, 1, 0, 0,
+                                     -std::sin(y), 0, std::cos(y), 0,
+                                     0, 0, 0, 1};
 
     Matrix4x4 y_matrix(y_data);
 
-    double z_data[16] = {std::cos(z), -std::sin(z), 0, 0,
-                         std::sin(z), std::cos(z), 0, 0,
-                         0, 0, 1, 0,
-                         0, 0, 0, 1};
+    std::array<double, 16> z_data = {std::cos(z), -std::sin(z), 0, 0,
+                                     std::sin(z), std::cos(z), 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1};
 
     Matrix4x4 z_matrix(z_data);
 
@@ -155,7 +151,7 @@ Matrix4x4 Matrix4x4::rotation(Vector3 vector) {
 }
 
 Matrix4x4 Matrix4x4::scale(Vector3 vector) {
-    double data[16] = {
+    std::array<double, 16> data = {
         vector[0], 0, 0, 0,
         0, vector[1], 0, 0,
         0, 0, vector[2], 0,
