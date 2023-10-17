@@ -4,6 +4,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -23,11 +24,11 @@ int main(int argc, char **argv) {
         projection_matrix = glm::ortho(-scene.camera.width / 2, scene.camera.width / 2, scene.camera.height / 2, -scene.camera.height / 2, scene.camera.near, scene.camera.far);
     }
 
-    glm::mat4 view_matrix = glm::translate(glm::mat4(1.0), glm::vec3(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2]));
-    glm::rotate(view_matrix, float(scene.camera.rotation[0]), glm::vec3(1, 0, 0));
-    glm::rotate(view_matrix, float(scene.camera.rotation[1]), glm::vec3(0, 1, 0));
-    glm::rotate(view_matrix, float(scene.camera.rotation[2]), glm::vec3(0, 0, 1));
-    view_matrix = glm::inverse(view_matrix);
+    glm::mat4 camera = glm::translate(glm::mat4(1.0f), glm::vec3(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2]));
+    glm::rotate(camera, float(scene.camera.rotation[2]), glm::vec3(0, 0, 1));
+    glm::rotate(camera, float(scene.camera.rotation[1]), glm::vec3(0, 1, 0));
+    glm::rotate(camera, float(scene.camera.rotation[0]), glm::vec3(1, 0, 0));
+    glm::mat4 view_matrix = glm::inverse(camera);
 
     std::vector<Object>
         objects;
