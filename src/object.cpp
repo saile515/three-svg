@@ -37,8 +37,8 @@ std::string Object::get_render_string() {
         Vector4 vertex2 = world_space_to_screen_space(model.vertices[i + 3], model.vertices[i + 4], model.vertices[i + 5], mvp_matrix);
         Vector4 vertex3 = world_space_to_screen_space(model.vertices[i + 6], model.vertices[i + 7], model.vertices[i + 8], mvp_matrix);
         render_string << "<polygon points=\""
-                      << vertex1[0] << "," << vertex1[1] << " " << vertex2[0] << "," << vertex2[1] << " " << vertex3[0] << "," << vertex3[1]
-                      << "\" style=\"fill:#"
+                      << vertex1[0] * 50 + 50 << "," << vertex1[1] * 50 + 50 << " " << vertex2[0] * 50 + 50 << "," << vertex2[1] * 50 + 50 << " " << vertex3[0] * 50 + 50 << "," << vertex3[1] * 50 + 50
+                      << "\" fill=\"#"
                       << std::hex << int(model.colors[i] * 255) << std::hex << int(model.colors[i + 1] * 255) << std::hex << int(model.colors[i + 2] * 255)
                       << "\" />";
     }
