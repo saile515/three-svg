@@ -1,8 +1,9 @@
-#include "matrix.hpp"
 #include "object.hpp"
 #include "parser.hpp"
-#include "vector.hpp"
 #include <fstream>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -15,21 +16,26 @@ int main(int argc, char **argv) {
     scene_parser.parse();
     SceneProperties scene = scene_parser.result;
 
-    Matrix4x4 projection_matrix;
+    glm::mat4 projection_matrix;
     if (scene.camera.type == "perspective") {
-        projection_matrix = Matrix4x4::perspective(scene.camera.fov, scene.camera.width, scene.camera.height, scene.camera.near, scene.camera.far);
+        projection_matrix = glm::perspective(scene.camera.fov, scene.camera.width / scene.camera.height, scene.camera.near, scene.camera.far);
     } else if (scene.camera.type == "orthographic") {
-        projection_matrix = Matrix4x4::orthographic(-scene.camera.width / 2, scene.camera.width / 2, scene.camera.height / 2, -scene.camera.height / 2, scene.camera.near, scene.camera.far);
+        projection_matrix = glm::ortho(-scene.camera.width / 2, scene.camera.width / 2, scene.camera.height / 2, -scene.camera.height / 2, scene.camera.near, scene.camera.far);
     }
 
-    Matrix4x4 view_matrix = (Matrix4x4::position(Vector3(scene.camera.position)) * Matrix4x4::rotation(Vector3(scene.camera.rotation))).inverse();
+    glm::mat4 view_matrix = glm::translate(glm::mat4(1.0), glm::vec3(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2]));
+    glm::rotate(view_matrix, float(scene.camera.rotation[0]), glm::vec3(1, 0, 0));
+    glm::rotate(view_matrix, float(scene.camera.rotation[1]), glm::vec3(0, 1, 0));
+    glm::rotate(view_matrix, float(scene.camera.rotation[2]), glm::vec3(0, 0, 1));
+    view_matrix = glm::inverse(view_matrix);
 
-    std::vector<Object> objects;
+    std::vector<Object>
+        objects;
 
     for (SceneProperties::ObjectProperties &object : scene.objects) {
         std::vector<Model> models = Model::load_from_obj(object.model, object.material);
         for (Model &model : models) {
-            objects.push_back(Object(object.position, object.rotation, object.scale, model));
+            objects.push_back(Object(glm::vec3(object.position[0], object.position[1], object.rotation[2]), glm::vec3(object.rotation[0], object.rotation[1], object.rotation[2]), glm::vec3(object.scale[0], object.scale[1], object.scale[2]), model));
         }
     }
 

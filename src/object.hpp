@@ -1,22 +1,21 @@
 #pragma once
 
-#include "matrix.hpp"
 #include "model.hpp"
-#include "vector.hpp"
+#include <glm/glm.hpp>
 #include <string>
 
 class Object {
 public:
-    Object(Vector3 position, Vector3 rotation, Vector3 scale, Model model);
+    Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Model model);
     std::string get_render_string();
-    void calculate_mvp_matrix(Matrix4x4 view_matrix, Matrix4x4 projection_matrix);
+    void calculate_mvp_matrix(glm::mat4 view_matrix, glm::mat4 projection_matrix);
 
 private:
-    Vector3 position;
-    Vector3 rotation;
-    Vector3 scale;
-    Matrix4x4 model_matrix;
-    Matrix4x4 mvp_matrix; // Model View Projection matrix
+    glm::vec3 position;
+    glm::vec3 rotation;
+    glm::vec3 scale;
+    glm::mat4 model_matrix;
+    glm::mat4 mvp_matrix; // Model View Projection matrix
     Model model;
 
     void calculate_model_matrix();
