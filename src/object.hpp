@@ -7,7 +7,7 @@
 class Object {
 public:
     Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, Model model);
-    std::string get_render_string();
+    std::string get_render_string(glm::vec4 camera_position);
     void calculate_mvp_matrix(glm::mat4 view_matrix, glm::mat4 projection_matrix);
 
 private:

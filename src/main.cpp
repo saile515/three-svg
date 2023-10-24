@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     for (Object &object : objects) {
         object.calculate_mvp_matrix(view_matrix, projection_matrix);
 
-        output_string += object.get_render_string();
+        output_string += object.get_render_string(glm::vec4(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2], 1));
     }
 
     output_string += "</svg>";

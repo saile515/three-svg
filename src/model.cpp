@@ -1,10 +1,11 @@
 #include "model.hpp"
 #define TINYOBJLOADER_IMPLEMENTATION
+#define TINYOBJLOADER_USE_DOUBLE
 #include "tiny_obj_loader.h"
 #include <iostream>
 #include <vector>
 
-Model::Model(std::vector<double> vertices, std::vector<double> colors) : vertices(vertices), colors(colors) {}
+Model::Model(std::vector<tinyobj::real_t> vertices, std::vector<tinyobj::real_t> colors, std::vector<tinyobj::real_t> normals, std::vector<tinyobj::index_t> indices) : vertices(vertices), colors(colors), normals(normals), indices(indices) {}
 
 std::vector<Model> Model::load_from_obj(std::string path, std::string mtl_path) {
     tinyobj::ObjReaderConfig config;
@@ -34,15 +35,7 @@ std::vector<Model> Model::load_from_obj(std::string path, std::string mtl_path) 
             }
         }
 
-        std::vector<double> vertices;
-        std::vector<double> colors;
-
-        for (tinyobj::index_t index : shape.mesh.indices) {
-            vertices.push_back(double(attributes.vertices[size_t(index.vertex_index)]));
-            colors.push_back(double(attributes.colors[size_t(index.vertex_index)]));
-        }
-
-        models.push_back(Model(vertices, colors));
+        models.push_back(Model(attributes.vertices, attributes.colors, attributes.normals, shape.mesh.indices));
     }
 
     return models;

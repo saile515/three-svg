@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include "model.hpp"
 
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
@@ -22,19 +23,30 @@ void Object::calculate_model_matrix() {
     model_matrix = position_matrix * rotation_matrix * scale_matrix;
 }
 
-std::string Object::get_render_string() {
+static glm::vec4 vertex_from_index(tinyobj::index_t index, Model &model) {
+    return glm::vec4(model.vertices[size_t(index.vertex_index)], model.vertices[size_t(index.vertex_index) + 1], model.vertices[size_t(index.vertex_index) + 2], 1);
+}
+
+std::string Object::get_render_string(glm::vec4 camera_position) {
     std::stringstream render_string;
 
-    for (size_t i = 0; i < model.vertices.size(); i += 3) {
-        glm::vec4 vertex1 = mvp_matrix * glm::vec4(model.vertices[i], model.vertices[i + 1], model.vertices[i + 2], 1);
-        glm::vec4 vertex2 = mvp_matrix * glm::vec4(model.vertices[i + 3], model.vertices[i + 4], model.vertices[i + 5], 1);
-        glm::vec4 vertex3 = mvp_matrix * glm::vec4(model.vertices[i + 6], model.vertices[i + 7], model.vertices[i + 8], 1);
-        model.colors[i] = 0.5;
-        render_string << "<polygon points=\""
-                      << vertex1[0] * 50 + 50 << "," << vertex1[1] * 50 + 50 << " " << vertex2[0] * 50 + 50 << "," << vertex2[1] * 50 + 50 << " " << vertex3[0] * 50 + 50 << "," << vertex3[1] * 50 + 50
-                      << "\" fill=\"#"
-                      << std::hex << int(model.colors[i] * 255) << std::hex << int(model.colors[i + 1] * 255) << std::hex << int(model.colors[i + 2] * 255)
-                      << "\" />";
+    for (size_t i = 0; i < model.indices.size(); i += 3) {
+        glm::vec4 vertex1 = mvp_matrix * vertex_from_index(model.indices[i], model);
+        glm::vec4 vertex2 = mvp_matrix * vertex_from_index(model.indices[i + 1], model);
+        glm::vec4 vertex3 = mvp_matrix * vertex_from_index(model.indices[i + 2], model);
+
+        glm::vec4 normal = glm::vec4(model.normals[size_t(model.indices[i].normal_index)], model.normals[size_t(model.indices[i].normal_index) + 1], model.normals[size_t(model.indices[i].normal_index) + 2], 1);
+
+        if (glm::dot((vertex1 - camera_position), normal) >= 0) {
+            continue;
+        }
+
+        render_string
+            << "<polygon points=\""
+            << vertex1[0] * 50 + 50 << "," << vertex1[1] * 50 + 50 << " " << vertex2[0] * 50 + 50 << "," << vertex2[1] * 50 + 50 << " " << vertex3[0] * 50 + 50 << "," << vertex3[1] * 50 + 50
+            << "\" stroke=\"#"
+            << std::hex << 255 << std::hex << 255 << std::hex << 255
+            << "\" />";
     }
 
     return render_string.str();
