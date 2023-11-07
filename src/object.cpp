@@ -39,9 +39,11 @@ std::string Object::get_render_string(glm::vec4 camera_position) {
         glm::vec4 vertex2 = mvp_matrix * vertex_from_index(model.indices[i + 1], model);
         glm::vec4 vertex3 = mvp_matrix * vertex_from_index(model.indices[i + 2], model);
 
-        glm::vec4 normal = glm::vec4(model.normals[size_t(model.indices[i].normal_index * 3)], model.normals[size_t(model.indices[i].normal_index) * 3 + 1], model.normals[size_t(model.indices[i].normal_index) * 3 + 2], 1);
+        glm::vec4 normal = glm::vec4(model.normals[size_t(model.indices[i].normal_index) * 3], model.normals[size_t(model.indices[i].normal_index) * 3 + 1], model.normals[size_t(model.indices[i].normal_index) * 3 + 2], 1);
 
-        if (glm::dot((vertex1 - camera_position), normal) >= 0) {
+        glm::mat4 rotation_matrix =  glm::eulerAngleYXZ(glm::radians(rotation.y), glm::radians(rotation.x), glm::radians(rotation.z));
+
+        if (glm::dot((model_matrix * vertex_from_index(model.indices[i], model) - camera_position), rotation_matrix * normal) >= 0) {
             continue;
         }
 
@@ -50,7 +52,7 @@ std::string Object::get_render_string(glm::vec4 camera_position) {
             << vertex1[0] * 50 + 50 << "," << vertex1[1] * 50 + 50 << " " << vertex2[0] * 50 + 50 << "," << vertex2[1] * 50 + 50 << " " << vertex3[0] * 50 + 50 << "," << vertex3[1] * 50 + 50
             << "\" fill=\"#"
             << std::hex << 255 << std::hex << 255 << std::hex << 255
-            << "\" />";
+            << "\" stroke=\"#000000\" />";
     }
 
     return render_string.str();
