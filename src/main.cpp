@@ -3,6 +3,7 @@
 #include <fstream>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <iostream>
@@ -25,16 +26,14 @@ int main(int argc, char **argv) {
     }
 
     glm::mat4 camera = glm::translate(glm::mat4(1.0f), glm::vec3(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2]));
-    glm::rotate(camera, float(scene.camera.rotation[2]), glm::vec3(0, 0, 1));
-    glm::rotate(camera, float(scene.camera.rotation[1]), glm::vec3(0, 1, 0));
-    glm::rotate(camera, float(scene.camera.rotation[0]), glm::vec3(1, 0, 0));
-    glm::mat4 view_matrix = glm::inverse(camera);
+        camera *= glm::eulerAngleYXZ(glm::radians(float(scene.camera.rotation[2])),glm::radians(float(scene.camera.rotation[2])),glm::radians(float(scene.camera.rotation[2])));
+        glm::mat4 view_matrix = glm::inverse(camera);
 
-    std::vector<Object>
-        objects;
+        std::vector<Object>
+            objects;
 
-    for (SceneProperties::ObjectProperties &object : scene.objects) {
-        std::vector<Model> models = Model::load_from_obj(object.model, object.material);
+        for (SceneProperties::ObjectProperties &object : scene.objects) {
+            std::vector<Model> models = Model::load_from_obj(object.model, object.material);
         for (Model &model : models) {
             objects.push_back(Object(glm::vec3(object.position[0], object.position[1], object.rotation[2]), glm::vec3(object.rotation[0], object.rotation[1], object.rotation[2]), glm::vec3(object.scale[0], object.scale[1], object.scale[2]), model));
         }
