@@ -32,6 +32,11 @@ static glm::vec4 vertex_from_index(tinyobj::index_t index, Model &model) {
                      model.vertices[size_t(index.vertex_index) * 3 + 2], 1);
 }
 
+static std::string vertex_to_string(glm::vec4 vertex, int width, int height) {
+    return std::to_string((((vertex[0] / vertex[2]) * width + width) / 2)) + "," +
+           std::to_string((((vertex[1] / vertex[2]) * height + height) / 2));
+}
+
 std::string Object::get_render_string(glm::vec4 camera_position, SceneProperties::LightingProperties &lighting) {
     std::stringstream render_string;
 
@@ -40,17 +45,19 @@ std::string Object::get_render_string(glm::vec4 camera_position, SceneProperties
         glm::vec4 vertex2 = mvp_matrix * vertex_from_index(model.indices[i + 1], model);
         glm::vec4 vertex3 = mvp_matrix * vertex_from_index(model.indices[i + 2], model);
 
+        std::cout << vertex1[0] << ", " << vertex1[1] << ", " << vertex1[2] << ", " << vertex1[3] << "\n";
+
         glm::vec4 local_normal = glm::vec4(model.normals[size_t(model.indices[i].normal_index) * 3],
                                            model.normals[size_t(model.indices[i].normal_index) * 3 + 1],
-                                           model.normals[size_t(model.indices[i].normal_index) * 3 + 2], 1);
+                                           model.normals[size_t(model.indices[i].normal_index) * 3 + 2], 0);
 
         glm::mat4 rotation_matrix = glm::eulerAngleYXZ(glm::radians(rotation.y), glm::radians(rotation.x), glm::radians(rotation.z));
 
-        glm::vec4 normal = local_normal * rotation_matrix;
+        glm::vec4 normal = rotation_matrix * local_normal;
 
         // Back-face culling
         if (glm::dot((model_matrix * vertex_from_index(model.indices[i], model) - camera_position), normal) >= 0) {
-            // continue;
+            continue;
         }
 
         // Lighting
@@ -62,8 +69,6 @@ std::string Object::get_render_string(glm::vec4 camera_position, SceneProperties
                                                   lighting.directional.intensity,
                                               1),
                              0);
-
-        std::cout << directional_intensity << "\n";
 
         int red = glm::clamp<double>(
             std::floor((lighting.directional.color[0] * directional_intensity + lighting.ambient.color[0] * lighting.ambient.intensity) *
@@ -78,8 +83,8 @@ std::string Object::get_render_string(glm::vec4 camera_position, SceneProperties
                        255),
             0, 255);
 
-        render_string << "<polygon points=\"" << vertex1[0] * 50 + 50 << "," << vertex1[1] * 50 + 50 << " " << vertex2[0] * 50 + 50 << ","
-                      << vertex2[1] * 50 + 50 << " " << vertex3[0] * 50 + 50 << "," << vertex3[1] * 50 + 50 << "\" fill=\"#";
+        render_string << "<polygon points=\"" << vertex_to_string(vertex1, 100, 100) << " " << vertex_to_string(vertex2, 100, 100) << " "
+                      << vertex_to_string(vertex3, 100, 100) << "\" fill=\"#";
 
         if (red < 16) {
             render_string << "0";

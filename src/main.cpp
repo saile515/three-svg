@@ -20,19 +20,20 @@ int main(int argc, char **argv) {
 
     glm::mat4 projection_matrix;
     if (scene.camera.type == "perspective") {
-        projection_matrix = glm::perspective(scene.camera.fov, scene.camera.width / scene.camera.height, scene.camera.near, scene.camera.far);
+        projection_matrix =
+            glm::perspective(glm::radians(scene.camera.fov), scene.camera.width / scene.camera.height, scene.camera.near, scene.camera.far);
     } else if (scene.camera.type == "orthographic") {
-        projection_matrix = glm::ortho(-scene.camera.width / 2, scene.camera.width / 2, scene.camera.height / 2, -scene.camera.height / 2, scene.camera.near, scene.camera.far);
+        projection_matrix = glm::ortho(-scene.camera.width / 2, scene.camera.width / 2, scene.camera.height / 2, -scene.camera.height / 2,
+                                       scene.camera.near, scene.camera.far);
     }
 
-    glm::mat4 camera = glm::translate(glm::mat4(1.0f), glm::vec3(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2]));
-    camera *= glm::eulerAngleYXZ(glm::radians(float(scene.camera.rotation[2])),
-                                 glm::radians(float(scene.camera.rotation[2])),
-                                 glm::radians(float(scene.camera.rotation[2])));
-    glm::mat4 view_matrix = glm::inverse(camera);
+    glm::mat4 view_matrix =
+        glm::lookAt(glm::vec3(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2]),
+                    glm::vec3(glm::radians(float(scene.camera.rotation[0])), glm::radians(float(scene.camera.rotation[1])),
+                              glm::radians(float(scene.camera.rotation[2]))),
+                    glm::vec3(0, 1, 0));
 
-    std::vector<Object>
-        objects;
+    std::vector<Object> objects;
 
     for (SceneProperties::ObjectProperties &object : scene.objects) {
         std::vector<Model> models = Model::load_from_obj(object.model, object.material);
@@ -48,7 +49,8 @@ int main(int argc, char **argv) {
     for (Object &object : objects) {
         object.calculate_mvp_matrix(view_matrix, projection_matrix);
 
-        output_string += object.get_render_string(glm::vec4(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2], 1), scene.lighting);
+        output_string += object.get_render_string(
+            glm::vec4(scene.camera.position[0], scene.camera.position[1], scene.camera.position[2], 1), scene.lighting);
     }
 
     output_string += "</svg>";
