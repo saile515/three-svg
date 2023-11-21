@@ -73,8 +73,8 @@ void Parser::parse() {
             result.camera.type = get_value<std::string>(camera, "type");
             result.camera.position =
                 get_value<std::array<double, 3>>(camera, "position");
-            result.camera.rotation =
-                get_value<std::array<double, 3>>(camera, "rotation");
+            result.camera.look_at =
+                get_value<std::array<double, 3>>(camera, "look_at");
             if (result.camera.type == "perspective") {
                 result.camera.fov = get_value<double>(camera, "fov");
             }

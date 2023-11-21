@@ -38,9 +38,9 @@ int main(int argc, char** argv) {
         glm::lookAt(glm::vec3(scene.camera.position[0],
                               scene.camera.position[1],
                               scene.camera.position[2]),
-                    glm::vec3(glm::radians(float(scene.camera.rotation[0])),
-                              glm::radians(float(scene.camera.rotation[1])),
-                              glm::radians(float(scene.camera.rotation[2]))),
+                    glm::vec3(glm::radians(float(scene.camera.look_at[0])),
+                              glm::radians(float(scene.camera.look_at[1])),
+                              glm::radians(float(scene.camera.look_at[2]))),
                     glm::vec3(0, 1, 0));
 
     std::vector<Object> objects;

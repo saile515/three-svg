@@ -3,7 +3,7 @@
     "camera": {
         "type": "perspective",
         "position": [0, 0, 5],
-        "rotation": [0, 0, 0],
+        "look_at": [0, 0, 0],
         "fov": 45,
         "width": 10,
         "height": 10,

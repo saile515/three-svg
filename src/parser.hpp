@@ -10,7 +10,7 @@ struct SceneProperties {
     struct CameraProperties {
         std::string type;
         std::array<double, 3> position;
-        std::array<double, 3> rotation;
+        std::array<double, 3> look_at;
         double fov;
         double width;
         double height;
