@@ -53,6 +53,22 @@ static std::string vertex_to_string(glm::vec4 vertex, int width, int height) {
                            2));
 }
 
+static int get_vertex_color(double directional_color,
+                            double directional_intensity,
+                            double ambient_color,
+                            double ambient_intensity,
+                            double vertex_color) {
+
+    // (Directional + Ambient) * Vertex Color (0-255)
+    return glm::clamp<int>(
+        int(std::floor(((directional_color * directional_intensity +
+                         ambient_color * ambient_intensity) *
+                        vertex_color) *
+                       255)),
+        0,
+        255);
+}
+
 std::string Object::get_render_string(
     glm::vec4 camera_position,
     SceneProperties::LightingProperties& lighting) {
@@ -101,36 +117,28 @@ std::string Object::get_render_string(
                 1),
             0);
 
-        // (Directional + Ambient) * Vertex Color
-        int red = glm::clamp<int>(
-            int(std::floor(
-                    (lighting.directional.color[0] * directional_intensity +
-                     lighting.ambient.color[0] * lighting.ambient.intensity) *
-                    255) *
-                double(
-                    model.colors[size_t(model.indices[i].vertex_index) * 3])),
-            0,
-            255);
+        int red = get_vertex_color(
+            lighting.directional.color[0],
+            directional_intensity,
+            lighting.ambient.color[0],
+            lighting.ambient.intensity,
+            double(model.colors[size_t(model.indices[i].vertex_index) * 3]));
 
-        int green = glm::clamp<int>(
-            int(std::floor(
-                    (lighting.directional.color[1] * directional_intensity +
-                     lighting.ambient.color[1] * lighting.ambient.intensity) *
-                    255) *
-                double(model.colors[size_t(model.indices[i].vertex_index) * 3 +
-                                    1])),
-            0,
-            255);
+        int green = get_vertex_color(
+            lighting.directional.color[1],
+            directional_intensity,
+            lighting.ambient.color[1],
+            lighting.ambient.intensity,
+            double(
+                model.colors[size_t(model.indices[i].vertex_index) * 3 + 1]));
 
-        int blue = glm::clamp<int>(
-            int(std::floor(
-                    (lighting.directional.color[2] * directional_intensity +
-                     lighting.ambient.color[2] * lighting.ambient.intensity) *
-                    255) *
-                double(model.colors[size_t(model.indices[i].vertex_index) * 3 +
-                                    2])),
-            0,
-            255);
+        int blue = get_vertex_color(
+            lighting.directional.color[2],
+            directional_intensity,
+            lighting.ambient.color[2],
+            lighting.ambient.intensity,
+            double(
+                model.colors[size_t(model.indices[i].vertex_index) * 3 + 2]));
 
         render_string << "<polygon points=\""
                       << vertex_to_string(vertex1, 100, 100) << " "
