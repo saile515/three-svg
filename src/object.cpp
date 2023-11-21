@@ -101,27 +101,34 @@ std::string Object::get_render_string(
                 1),
             0);
 
+        // (Directional + Ambient) * Vertex Color
         int red = glm::clamp<int>(
             int(std::floor(
-                (lighting.directional.color[0] * directional_intensity +
-                 lighting.ambient.color[0] * lighting.ambient.intensity) *
-                255)),
+                    (lighting.directional.color[0] * directional_intensity +
+                     lighting.ambient.color[0] * lighting.ambient.intensity) *
+                    255) *
+                double(
+                    model.colors[size_t(model.indices[i].vertex_index) * 3])),
             0,
             255);
 
         int green = glm::clamp<int>(
             int(std::floor(
-                (lighting.directional.color[1] * directional_intensity +
-                 lighting.ambient.color[1] * lighting.ambient.intensity) *
-                255)),
+                    (lighting.directional.color[1] * directional_intensity +
+                     lighting.ambient.color[1] * lighting.ambient.intensity) *
+                    255) *
+                double(model.colors[size_t(model.indices[i].vertex_index) * 3 +
+                                    1])),
             0,
             255);
 
         int blue = glm::clamp<int>(
             int(std::floor(
-                (lighting.directional.color[2] * directional_intensity +
-                 lighting.ambient.color[2] * lighting.ambient.intensity) *
-                255)),
+                    (lighting.directional.color[2] * directional_intensity +
+                     lighting.ambient.color[2] * lighting.ambient.intensity) *
+                    255) *
+                double(model.colors[size_t(model.indices[i].vertex_index) * 3 +
+                                    2])),
             0,
             255);
 
