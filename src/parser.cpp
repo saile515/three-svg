@@ -116,8 +116,6 @@ void Parser::parse() {
                 if (object.isObject()) {
                     object_properties.model =
                         get_value<std::string>(object, "model");
-                    object_properties.material =
-                        get_value<std::string>(object, "material");
                     object_properties.position =
                         get_value<std::array<double, 3>>(object, "position");
                     object_properties.rotation =

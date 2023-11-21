@@ -46,12 +46,11 @@ int main(int argc, char** argv) {
     std::vector<Object> objects;
 
     for (SceneProperties::ObjectProperties& object : scene.objects) {
-        std::vector<Model> models =
-            Model::load_from_obj(object.model, object.material);
+        std::vector<Model> models = Model::load_from_obj(object.model);
         for (Model& model : models) {
             objects.push_back(Object(
                 glm::vec3(
-                    object.position[0], object.position[1], object.rotation[2]),
+                    object.position[0], object.position[1], object.position[2]),
                 glm::vec3(
                     object.rotation[0], object.rotation[1], object.rotation[2]),
                 glm::vec3(object.scale[0], object.scale[1], object.scale[2]),

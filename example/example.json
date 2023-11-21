@@ -16,17 +16,16 @@
             "intensity": 0.3
         },
         "directional": {
-            "color": [1, 0, 0],
+            "color": [1, 0.8, 0.9],
             "intensity": 0.5,
-            "rotation": [20, 20, 20]
+            "rotation": [10, 0, 10]
         }
     },
     "objects": [
         {
             "model": "example/monkey.obj",
-            "material": "",
             "position": [0, 0, 0],
-            "rotation": [180, 150, 0],
+            "rotation": [90, 140, 0],
             "scale": [1, 1, 1]
         }
     ]

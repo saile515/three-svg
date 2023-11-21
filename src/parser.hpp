@@ -41,7 +41,6 @@ struct SceneProperties {
 
     struct ObjectProperties {
         std::string model;
-        std::string material;
         std::array<double, 3> position;
         std::array<double, 3> rotation;
         std::array<double, 3> scale;

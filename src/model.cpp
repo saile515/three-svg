@@ -14,10 +14,8 @@ Model::Model(std::vector<tinyobj::real_t> vertices,
   , normals(normals)
   , indices(indices) {}
 
-std::vector<Model> Model::load_from_obj(std::string path,
-                                        std::string mtl_path) {
+std::vector<Model> Model::load_from_obj(std::string path) {
     tinyobj::ObjReaderConfig config;
-    config.mtl_search_path = mtl_path;
 
     tinyobj::ObjReader reader;
 
