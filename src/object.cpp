@@ -45,8 +45,6 @@ std::string Object::get_render_string(glm::vec4 camera_position, SceneProperties
         glm::vec4 vertex2 = mvp_matrix * vertex_from_index(model.indices[i + 1], model);
         glm::vec4 vertex3 = mvp_matrix * vertex_from_index(model.indices[i + 2], model);
 
-        std::cout << vertex1[0] << ", " << vertex1[1] << ", " << vertex1[2] << ", " << vertex1[3] << "\n";
-
         glm::vec4 local_normal = glm::vec4(model.normals[size_t(model.indices[i].normal_index) * 3],
                                            model.normals[size_t(model.indices[i].normal_index) * 3 + 1],
                                            model.normals[size_t(model.indices[i].normal_index) * 3 + 2], 0);
