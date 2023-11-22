@@ -45,21 +45,16 @@ static glm::vec4 vertex_from_index(tinyobj::index_t index, Model& model) {
 }
 
 static std::string vertex_to_string(glm::vec4 vertex, int width, int height) {
-    return std::to_string(
-               std::floor(((double(vertex[0] / vertex[2]) * double(width) +
-                            double(width)) /
-                           2) *
-                              100 +
-                          0.5) /
-               100) +
-           "," +
-           std::to_string(
-               std::floor(((double(vertex[1] / vertex[2]) * double(height) +
-                            double(height)) /
-                           2) *
-                              100 +
-                          0.5) /
-               100);
+    std::stringstream stream;
+
+    stream
+        << std::fixed << std::setprecision(2)
+        << ((double(vertex[0] / vertex[2]) * double(width) + double(width)) / 2)
+        << " " << std::fixed << std::setprecision(2)
+        << ((double(vertex[1] / vertex[2]) * double(height) + double(height)) /
+            2);
+
+    return stream.str();
 }
 
 static int get_vertex_color(double directional_color,
@@ -222,10 +217,9 @@ std::string Object::get_render_string(
         color << std::hex << blue;
 
         // Add triangle with previously calculated coordinates
-        render_string << "<polygon points=\""
-                      << vertex_to_string(vertex1, 100, 100) << " "
-                      << vertex_to_string(vertex2, 100, 100) << " "
-                      << vertex_to_string(vertex3, 100, 100) << "\" fill=\"#"
+        render_string << "<path d=\"M" << vertex_to_string(vertex1, 100, 100)
+                      << " L" << vertex_to_string(vertex2, 100, 100) << " L"
+                      << vertex_to_string(vertex3, 100, 100) << " z\" fill=\"#"
                       << color.str();
 
         render_string << "\"/>";
