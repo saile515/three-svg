@@ -70,6 +70,22 @@ static int get_vertex_color(double directional_color,
         255);
 }
 
+// Slightly modified version of
+// https://stackoverflow.com/questions/45447361/how-to-move-certain-elements-of-stdvector-to-a-new-index-within-the-vector
+template<typename T>
+void move_element_in_vector(std::vector<T>& vector,
+                            size_t old_index,
+                            size_t new_index) {
+    if (old_index > new_index)
+        std::rotate(vector.rend() - old_index - 1,
+                    vector.rend() - old_index,
+                    vector.rend() - new_index);
+    else
+        std::rotate(vector.begin() + old_index,
+                    vector.begin() + old_index + 1,
+                    vector.begin() + new_index + 1);
+}
+
 std::string Object::get_render_string(
     glm::vec4 camera_position,
     SceneProperties::LightingProperties& lighting) {
@@ -77,35 +93,52 @@ std::string Object::get_render_string(
 
     auto indices = model.indices;
 
-    for (size_t i = 0; i < indices.size(); i += 3) {
-        glm::vec4 a_vertex1 = vertex_from_index(indices[i], model);
-        glm::vec4 a_vertex2 = vertex_from_index(indices[i + 1], model);
-        glm::vec4 a_vertex3 = vertex_from_index(indices[i + 2], model);
+    // Sort indices based on distance from camera in descending order
+    for (size_t iteration = 0; iteration < indices.size() / 3; iteration++) {
+        for (size_t i = 0; i < indices.size() - 3 - iteration * 3; i += 3) {
+            glm::vec4 a_vertex1 =
+                model_matrix * vertex_from_index(indices[i], model);
+            glm::vec4 a_vertex2 =
+                model_matrix * vertex_from_index(indices[i + 1], model);
+            glm::vec4 a_vertex3 =
+                model_matrix * vertex_from_index(indices[i + 2], model);
 
-        glm::vec4 a_center = float(1 / 3) * (a_vertex1 + a_vertex2 + a_vertex3);
-        int a_distance = (camera_position - a_center).length();
+            glm::vec4 a_center = (a_vertex1 + a_vertex2 + a_vertex3);
+            float a_distance =
+                glm::length(glm::vec3(camera_position) - glm::vec3(a_center));
 
-        glm::vec4 b_vertex1 = vertex_from_index(indices[i + 3], model);
-        glm::vec4 b_vertex2 = vertex_from_index(indices[i + 4], model);
-        glm::vec4 b_vertex3 = vertex_from_index(indices[i + 5], model);
+            glm::vec4 b_vertex1 =
+                model_matrix * vertex_from_index(indices[i + 3], model);
+            glm::vec4 b_vertex2 =
+                model_matrix * vertex_from_index(indices[i + 4], model);
+            glm::vec4 b_vertex3 =
+                model_matrix * vertex_from_index(indices[i + 5], model);
 
-        glm::vec4 b_center = float(1 / 3) * (b_vertex1 + b_vertex2 + b_vertex3);
-        int b_distance = (camera_position - b_center).length();
+            glm::vec4 b_center = (b_vertex1 + b_vertex2 + b_vertex3);
+            float b_distance =
+                glm::length(glm::vec3(camera_position) - glm::vec3(b_center));
+
+            // Switch a and b if b is further away
+            if (b_distance > a_distance) {
+                move_element_in_vector(indices, i + 3, i);
+                move_element_in_vector(indices, i + 4, i + 1);
+                move_element_in_vector(indices, i + 5, i + 2);
+            }
+        }
     }
 
-    for (size_t i = 0; i < model.indices.size(); i += 3) {
-        glm::vec4 vertex1 =
-            mvp_matrix * vertex_from_index(model.indices[i], model);
+    for (size_t i = 0; i < indices.size(); i += 3) {
+        glm::vec4 vertex1 = mvp_matrix * vertex_from_index(indices[i], model);
         glm::vec4 vertex2 =
-            mvp_matrix * vertex_from_index(model.indices[i + 1], model);
+            mvp_matrix * vertex_from_index(indices[i + 1], model);
         glm::vec4 vertex3 =
-            mvp_matrix * vertex_from_index(model.indices[i + 2], model);
+            mvp_matrix * vertex_from_index(indices[i + 2], model);
 
-        glm::vec4 local_normal = glm::vec4(
-            model.normals[size_t(model.indices[i].normal_index) * 3],
-            model.normals[size_t(model.indices[i].normal_index) * 3 + 1],
-            model.normals[size_t(model.indices[i].normal_index) * 3 + 2],
-            0);
+        glm::vec4 local_normal =
+            glm::vec4(model.normals[size_t(indices[i].normal_index) * 3],
+                      model.normals[size_t(indices[i].normal_index) * 3 + 1],
+                      model.normals[size_t(indices[i].normal_index) * 3 + 2],
+                      0);
 
         glm::mat4 rotation_matrix =
             glm::eulerAngleYXZ(glm::radians(rotation.y),
@@ -115,10 +148,9 @@ std::string Object::get_render_string(
         glm::vec4 normal = rotation_matrix * local_normal;
 
         // Back-face culling
-        if (glm::dot(
-                (model_matrix * vertex_from_index(model.indices[i], model) -
-                 camera_position),
-                normal) >= 0) {
+        if (glm::dot((model_matrix * vertex_from_index(indices[i], model) -
+                      camera_position),
+                     normal) >= 0) {
             continue;
         }
 
@@ -141,41 +173,44 @@ std::string Object::get_render_string(
             directional_intensity,
             lighting.ambient.color[0],
             lighting.ambient.intensity,
-            double(model.colors[size_t(model.indices[i].vertex_index) * 3]));
+            double(model.colors[size_t(indices[i].vertex_index) * 3]));
 
         int green = get_vertex_color(
             lighting.directional.color[1],
             directional_intensity,
             lighting.ambient.color[1],
             lighting.ambient.intensity,
-            double(
-                model.colors[size_t(model.indices[i].vertex_index) * 3 + 1]));
+            double(model.colors[size_t(indices[i].vertex_index) * 3 + 1]));
 
         int blue = get_vertex_color(
             lighting.directional.color[2],
             directional_intensity,
             lighting.ambient.color[2],
             lighting.ambient.intensity,
-            double(
-                model.colors[size_t(model.indices[i].vertex_index) * 3 + 2]));
+            double(model.colors[size_t(indices[i].vertex_index) * 3 + 2]));
 
+        // Add triangle with previously calculated coordinates
         render_string << "<polygon points=\""
                       << vertex_to_string(vertex1, 100, 100) << " "
                       << vertex_to_string(vertex2, 100, 100) << " "
                       << vertex_to_string(vertex3, 100, 100) << "\" fill=\"#";
 
+        // Add a prefixing 0 if value is less than 16, in order to always
+        // represent value with two hex characters
         if (red < 16) {
             render_string << "0";
         }
 
         render_string << std::hex << red;
 
+        // ^^^
         if (green < 16) {
             render_string << "0";
         }
 
         render_string << std::hex << green;
 
+        // ^^^
         if (blue < 16) {
             render_string << "0";
         }
