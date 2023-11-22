@@ -59,7 +59,8 @@ int main(int argc, char** argv) {
     }
 
     std::string output_string =
-        "<svg viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\">";
+        "<svg viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\" "
+        "shape-rendering=\"crispEdges\">";
 
     for (Object& object : objects) {
         object.calculate_mvp_matrix(view_matrix, projection_matrix);
