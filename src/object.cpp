@@ -2,6 +2,7 @@
 #include "model.hpp"
 #include "parser.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
@@ -73,6 +74,24 @@ std::string Object::get_render_string(
     glm::vec4 camera_position,
     SceneProperties::LightingProperties& lighting) {
     std::stringstream render_string;
+
+    auto indices = model.indices;
+
+    for (size_t i = 0; i < indices.size(); i += 3) {
+        glm::vec4 a_vertex1 = vertex_from_index(indices[i], model);
+        glm::vec4 a_vertex2 = vertex_from_index(indices[i + 1], model);
+        glm::vec4 a_vertex3 = vertex_from_index(indices[i + 2], model);
+
+        glm::vec4 a_center = float(1 / 3) * (a_vertex1 + a_vertex2 + a_vertex3);
+        int a_distance = (camera_position - a_center).length();
+
+        glm::vec4 b_vertex1 = vertex_from_index(indices[i + 3], model);
+        glm::vec4 b_vertex2 = vertex_from_index(indices[i + 4], model);
+        glm::vec4 b_vertex3 = vertex_from_index(indices[i + 5], model);
+
+        glm::vec4 b_center = float(1 / 3) * (b_vertex1 + b_vertex2 + b_vertex3);
+        int b_distance = (camera_position - b_center).length();
+    }
 
     for (size_t i = 0; i < model.indices.size(); i += 3) {
         glm::vec4 vertex1 =
