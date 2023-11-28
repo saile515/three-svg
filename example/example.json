@@ -13,7 +13,7 @@
     "lighting": {
         "ambient": {
             "color": [1, 1, 1],
-            "intensity": 0.3
+            "intensity": 0.4
         },
         "directional": {
             "color": [1.0, 0.7, 0.8],
@@ -25,7 +25,7 @@
         {
             "model": "example/monkey.obj",
             "position": [0, 0, 0],
-            "rotation": [90, 140, 0],
+            "rotation": [0, -40, 180],
             "scale": [1, 1, 1]
         }
     ]

@@ -143,16 +143,11 @@ std::string Object::get_render_string(
                       model.normals[size_t(indices[i].normal_index) * 3 + 2],
                       0);
 
-        glm::mat4 rotation_matrix =
-            glm::eulerAngleYXZ(glm::radians(rotation.y),
-                               glm::radians(rotation.x),
-                               glm::radians(rotation.z));
-
-        glm::vec4 normal = rotation_matrix * local_normal;
+        glm::vec4 normal = glm::normalize(model_matrix * local_normal);
 
         // Back-face culling
-        if (glm::dot((model_matrix * vertex_from_index(indices[i], model) -
-                      camera_position),
+        if (glm::dot(model_matrix * vertex_from_index(indices[i], model) -
+                         camera_position,
                      normal) >= 0) {
             continue;
         }
