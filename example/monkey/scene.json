@@ -23,7 +23,7 @@
     },
     "objects": [
         {
-            "model": "example/monkey.obj",
+            "model": "monkey.obj",
             "position": [0, 0, 0],
             "rotation": [0, -40, 180],
             "scale": [1, 1, 1]

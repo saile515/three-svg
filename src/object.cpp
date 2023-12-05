@@ -9,6 +9,7 @@
 #include <glm/gtx/transform.hpp>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 
 Object::Object(glm::vec3 position,
@@ -99,27 +100,49 @@ std::string Object::get_render_string(
     // Sort indices based on distance from camera in descending order
     for (size_t iteration = 0; iteration < indices.size() / 3; iteration++) {
         for (size_t i = 0; i < indices.size() - 3 - iteration * 3; i += 3) {
-            glm::vec4 a_vertex1 =
-                model_matrix * vertex_from_index(indices[i], model);
-            glm::vec4 a_vertex2 =
-                model_matrix * vertex_from_index(indices[i + 1], model);
-            glm::vec4 a_vertex3 =
-                model_matrix * vertex_from_index(indices[i + 2], model);
+            glm::vec4 a[3] = {
+                model_matrix * vertex_from_index(indices[i], model),
+                model_matrix * vertex_from_index(indices[i + 1], model),
+                model_matrix * vertex_from_index(indices[i + 2], model)
+            };
 
-            glm::vec4 a_center = (a_vertex1 + a_vertex2 + a_vertex3);
+            // glm::vec4 a_center = (a_vertex1 + a_vertex2 + a_vertex3);
+            // float a_distance =
+            //    glm::length(glm::vec3(camera_position) - glm::vec3(a_center));
+
+            glm::vec4 b[3] = {
+                model_matrix * vertex_from_index(indices[i + 3], model),
+                model_matrix * vertex_from_index(indices[i + 4], model),
+                model_matrix * vertex_from_index(indices[i + 5], model)
+            };
+
+            // glm::vec4 b_center = (b_vertex1 + b_vertex2 + b_vertex3);
+            // float b_distance =
+            //     glm::length(glm::vec3(camera_position) -
+            //     glm::vec3(b_center));
+
+            int a_min;
+            int b_min;
+
+            float min_distance = std::numeric_limits<float>::max();
+
+            // Get shortest distance between vertices
+            for (int ai = 0; ai < 3; ai++) {
+                for (int bi = 0; bi < 3; bi++) {
+                    if (std::abs(
+                            glm::length(glm::vec3(a[ai]) - glm::vec3(b[bi]))) <
+                        min_distance) {
+                        a_min = ai;
+                        b_min = bi;
+                    }
+                }
+            }
+
             float a_distance =
-                glm::length(glm::vec3(camera_position) - glm::vec3(a_center));
+                glm::length(glm::vec3(camera_position) - glm::vec3(a[a_min]));
 
-            glm::vec4 b_vertex1 =
-                model_matrix * vertex_from_index(indices[i + 3], model);
-            glm::vec4 b_vertex2 =
-                model_matrix * vertex_from_index(indices[i + 4], model);
-            glm::vec4 b_vertex3 =
-                model_matrix * vertex_from_index(indices[i + 5], model);
-
-            glm::vec4 b_center = (b_vertex1 + b_vertex2 + b_vertex3);
             float b_distance =
-                glm::length(glm::vec3(camera_position) - glm::vec3(b_center));
+                glm::length(glm::vec3(camera_position) - glm::vec3(b[b_min]));
 
             // Switch a and b if b is further away
             if (b_distance > a_distance) {

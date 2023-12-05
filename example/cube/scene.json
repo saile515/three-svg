@@ -1,0 +1,32 @@
+{
+    "version": "1.0.0",
+    "camera": {
+        "type": "perspective",
+        "position": [0, 0, 5],
+        "look_at": [0, 0, 0],
+        "fov": 45,
+        "width": 10,
+        "height": 10,
+        "near": 0.1,
+        "far": 1000
+    },
+    "lighting": {
+        "ambient": {
+            "color": [1, 1, 1],
+            "intensity": 0.4
+        },
+        "directional": {
+            "color": [1.0, 0.7, 0.8],
+            "intensity": 0.7,
+            "rotation": [10, 0, 10]
+        }
+    },
+    "objects": [
+        {
+            "model": "cube.obj",
+            "position": [0, 0, 0],
+            "rotation": [0, -40, 180],
+            "scale": [1, 1, 1]
+        }
+    ]
+}
