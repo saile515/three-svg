@@ -1,3 +1,5 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "object.hpp"
 #include "model.hpp"
 #include "parser.hpp"
